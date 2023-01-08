@@ -1,0 +1,25 @@
+---
+- name: Config Nginx
+  hosts: all
+  remote_user: ansible
+  become: yes
+
+  tasks:
+    - name: change port
+      copy:
+        src: ./static_site.cfg
+        dest: /etc/nginx/sites-available/static_site.cfg
+
+    - name: create symlink
+      file:
+        src: /etc/nginx/sites-available/static_site.cfg
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+
+    - name: Align index.html to right folder
+      command: mv /var/www/html/index.nginx-debian.html /var/www/html/index.html
+
+    - name: Start Nginx
+      service:
+        name: nginx
+        state: started
